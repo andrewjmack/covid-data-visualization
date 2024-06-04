@@ -7,20 +7,20 @@ body {
 
 #map {
   height: 70vh;
-  width: 70%; /* 지도 영역을 70%로 설정 */
+  width: 70%; 
   float: left;
 }
 
 #info-panel {
   height: 100vh;
-  width: 30%; /* 정보 패널 영역을 30%로 설정 */
+  width: 30%; 
   float: left;
   background-color: #f0f0f0;
   overflow-y: auto;
 }
 
 #state-info {
-  height: 30vh; /* 주의 정보 영역을 화면의 30%로 설정 */
+  height: 30vh;
   width: 70%;
   background-color: #f0f0f0;
   overflow-y: auto;
