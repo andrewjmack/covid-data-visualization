@@ -7,6 +7,9 @@ from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func
 
+import numpy as np
+import pandas as pd
+
 from flask import Flask, jsonify, render_template
 
 #################################################
@@ -58,6 +61,7 @@ def epidemiology_us():
 
     # Perform a query to retrieve the epidemiology table data
     # epi_results = session.query(Epidemiology.location_key).all()
+    """
     epi_results = session.query(Epidemiology.location_key,
                                 Epidemiology.date,
                                 Epidemiology.new_confirmed,
@@ -70,11 +74,56 @@ def epidemiology_us():
     
     # close session
     session.close()
+    """
+
+
 
     # Store results as a dictionary accessible for JSON
-    epi_dict = dict(epi_results)
+    """
+    #epi_dict = dict(epi_results)
+    print("type(epi_results):")
+    print(type(epi_results))
+    print(epi_results[0])
+    print(type(epi_results[0]))
+    
+    #sample = epi_results[0].__dict__
+    #sample = dict(epi_results[0])
+    #print(sample)
+    """
+
+    sql_df = pd.read_sql("SELECT location_key, date, new_confirmed, new_deceased FROM epidemiology;", con=engine)
+
+    #print("sql_df:")
+    #print(sql_df)
+
+    #data = sql_df.to_dict()
+
+    payload = list()
+    #print(sql_df)
+    #print(sql_df['location_key'])
+
+    
+    for idx, row in sql_df.iterrows():
+        
+        sample_data = {
+            "location_key": row['location_key'],
+            "date": row['date'],
+            "new_confirmed": row['new_confirmed'],
+            "new_deceased": row['new_deceased']
+        }
+    
+
+        payload.append(sample_data)
+
+    #print(payload)
+    
+
+
+ 
+    
 
     # Print results to terminal
+    """
     print()
     print(f"The US epidemiology results:")
     print()
@@ -82,9 +131,11 @@ def epidemiology_us():
     print()
     print(f"---- RESULTS COMPLETE ----")
     print()
+    """
 
     # Return results for server call
-    return jsonify(epi_dict)
+    #return jsonify(epi_dict)
+    return jsonify(payload)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
