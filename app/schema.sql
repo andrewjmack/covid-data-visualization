@@ -9,7 +9,7 @@
 -- Create table with primary key composed of two columns
 sqlite>
 CREATE TABLE IF NOT EXISTS epidemiology (
-	location_key VARCHAR(2) NOT NULL,
+    location_key VARCHAR(2) NOT NULL,
     date DATE  NOT NULL,
     new_confirmed INT,
     new_deceased INT,
@@ -28,7 +28,7 @@ sqlite> .schema
 
 -- Import CSV dataset from file directory
 -- “skip 1” ignores the CSV headers
-sqlite> .import --csv --skip 1 US_epi_cleaned.csv epidemiology
+sqlite> .import --csv --skip 1 ../resources/US_epi_cleaned.csv epidemiology
 
 -- Example queries to confirm successful import
 SELECT * FROM epidemiology LIMIT(5);
@@ -55,7 +55,7 @@ PRIMARY KEY (location_key)
 
 -- Import CSV dataset from file directory
 -- “skip 1” ignores the CSV headers
-sqlite> .import --csv --skip 1 us_demo_cleaned.csv demographic
+sqlite> .import --csv --skip 1 ../resources/us_demo_cleaned.csv demographic
 
 -- Example queries to confirm successful import
 SELECT * FROM demographic LIMIT(5);
@@ -105,8 +105,28 @@ sqlite> .schema
 
 -- Import CSV dataset from file directory
 -- “skip 1” ignores the CSV headers
-sqlite> .import --csv --skip 1 US_vac_cleaned.csv vaccination
+sqlite> .import --csv --skip 1 ../resources/US_vac_cleaned.csv vaccination
 
 -- Example queries to confirm successful import
 SELECT * FROM vaccination LIMIT(5);
 SELECT * FROM vaccination WHERE (location_key = 'CO') LIMIT(5);
+
+-- Repeat steps for creation of states table
+sqlite>
+CREATE TABLE IF NOT EXISTS states (
+location_key VARCHAR(2) NOT NULL,
+state_name VARCHAR(25)  NOT NULL,
+PRIMARY KEY (location_key, state_name)
+);
+
+-- Confirm table creation and schema
+sqlite> .table
+sqlite> .schema
+
+-- Import CSV dataset from file directory
+-- “skip 1” ignores the CSV headers
+sqlite> .import --csv --skip 1 ../resources/states_cleaned.csv states
+
+-- Example queries to confirm successful import
+SELECT * FROM states LIMIT(5);
+SELECT * FROM vaccination WHERE (location_key = 'CO');
