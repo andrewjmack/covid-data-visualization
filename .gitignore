@@ -1,0 +1,7 @@
+# Adding config.py file
+api_keys.py
+
+# Jupyter Notebook
+.ipynb_checkpoints
+__pycache__
+.pyc
