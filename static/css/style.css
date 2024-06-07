@@ -1,27 +1,37 @@
-body {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
+.container {
+  width: 100%;
 }
 
 #map {
-  height: 70vh;
-  width: 70%; 
+  height: 100vh;
+  width: 65%;
   float: left;
 }
 
 #info-panel {
   height: 100vh;
-  width: 30%; 
+  width: 33%;
   float: left;
   background-color: #f0f0f0;
   overflow-y: auto;
+  padding: 10px;
 }
 
-#state-info {
-  height: 30vh;
-  width: 70%;
-  background-color: #f0f0f0;
-  overflow-y: auto;
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.info-table th,
+.info-table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+.info-table th {
+  text-align: left;
+}
+
+.info-table tr:nth-child(even) {
+  background-color: #f2f2f2;
 }
