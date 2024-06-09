@@ -18,12 +18,37 @@ function style(feature) {
     };
 }
 
+// Global dictionary to store population data
+var populationData = {};
+
+// Load population data from CSV
+d3.csv("resources/US_demo_cleaned.csv").then(function(data) {
+    data.forEach(function(d) {
+        populationData[d.location_key] = d.population;
+    });
+});
+
+// Function to populate the population data when a state is clicked
+function populatePopulation(locationKey) {
+    var populationElement = document.getElementById('population');
+
+    if (populationData.hasOwnProperty(locationKey)) {
+        populationElement.innerHTML = populationData[locationKey];
+    } else {
+        populationElement.innerHTML = "N/A";
+    }
+}
+
 // Define a function to handle feature interactions
 function onEachFeature(feature, layer) {
     layer.on({
         mouseover: highlightFeature,
         mouseout: resetHighlight,
-        click: showInfoAndZoom
+        click: function(e) {
+            showInfoAndZoom(e);
+            fetchEpidemiologyData(feature.properties.location_key);
+            populatePopulation(feature.properties.location_key);
+        }
     });
 }
 
@@ -60,21 +85,8 @@ function showInfoAndZoom(e) {
     map.fitBounds(layer.getBounds());
 }
 
-function showInfoForDate() {
-    var selectedDate = document.getElementById('date-input').value;
-
-    // 예시: 선택된 날짜를 콘솔에 출력
-    console.log("Selected date:", selectedDate);
-
-    // 여기에 선택된 날짜에 해당하는 정보를 불러오는 코드를 추가
-    // fetch나 AJAX를 사용하여 서버로부터 데이터를 요청하고, 응답을 처리합니다.
-    // 응답으로 받은 데이터를 info-panel에 출력하는 등의 작업을 수행합니다.
-}
-
-// Add the GeoJSON data
-var geojson;
-
 // Load GeoJSON data for the US states
+var geojson;
 fetch('https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json')
     .then(response => response.json())
     .then(data => {
@@ -82,7 +94,31 @@ fetch('https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geo
             style: style,
             onEachFeature: onEachFeature
         }).addTo(map);
-
-        // Set initial state name
-        document.getElementById('info-panel-header').innerHTML = '<h2>United States</h2>';
     });
+
+// Function to fetch data from the API
+function fetchEpidemiologyData(locationKey) {
+    const url = `http://127.0.0.1:5000/api/v1.0/epidemiology_us?location_key=${locationKey}`;
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.length > 0) {
+                updateInfoPanel(data[0]);  // Update the info panel with the fetched data
+            } else {
+                console.error('No data available for:', locationKey);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching epidemiology data:', error);
+        });
+}
+
+// Function to update the info panel
+function updateInfoPanel(data) {
+    document.getElementById('tested').textContent = data.cumulative_tested || "N/A";
+    document.getElementById('covid-positive').textContent = data.cumulative_confirmed || "N/A";
+    document.getElementById('covid-negative').textContent = data.new_tested - data.new_confirmed || "N/A";  // Example calculation
+    document.getElementById('death').textContent = data.cumulative_deceased || "N/A";
+    document.getElementById('recovered').textContent = data.cumulative_recovered || "N/A";
+}
