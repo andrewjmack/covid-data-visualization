@@ -8,7 +8,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 var currentZoomedLayer = null;  // Variable to track the currently zoomed layer
 
-// Function to highlight feature and display state name in legend each time the mouse hovers over
+// Function to highlight feature and display state name and density in legend each time the mouse hovers over
 function highlightFeature(e) {
     var layer = e.target;
 
@@ -20,8 +20,15 @@ function highlightFeature(e) {
         fillOpacity: 0.7
     });
 
-    // Display the state name in the legend
-    document.getElementById('legend').innerHTML = 'Highlighted: ' + layer.feature.properties.name;
+    // Calculate population density
+    var area = layer.feature.properties.area; // Assuming 'area' is in square kilometers
+    var stateName = layer.feature.properties.name;
+    var population = layer.feature.properties.population; // Assuming population is available here
+
+    var density = population && area ? (population / area).toFixed(2) : 'N/A';
+
+    // Display the state name and density in the legend
+    document.getElementById('legend').innerHTML = 'Highlighted: ' + stateName + ' (Density: ' + density + ')';
 
     // Bring the layer to the front
     if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
@@ -42,6 +49,7 @@ function resetHighlight(e) {
 function showInfoAndZoom(e) {
     var layer = e.target;
     var state = layer.feature.properties.name;
+    var area = layer.feature.properties.area; // Assuming 'area' is in square kilometers
 
     console.log("Clicked state:", state); // Debugging log
 
@@ -49,7 +57,9 @@ function showInfoAndZoom(e) {
     if (currentZoomedLayer === layer) {
         map.setView([37.0902, -95.7129], 4);  // Zoom out to the initial view
         document.getElementById('info-panel-header').innerHTML = '<h2>United States</h2>';  // Reset header
+        resetTable();  // Reset table data
         currentZoomedLayer = null;  // Reset the currently zoomed layer
+        document.getElementById('legend').innerHTML = 'Highlighted: None'; // Reset legend
     } else {
         // Zoom in to the clicked layer
         map.fitBounds(layer.getBounds());
@@ -57,12 +67,24 @@ function showInfoAndZoom(e) {
         currentZoomedLayer = layer;  // Update the currently zoomed layer
 
         // Fetch and display demographic and epidemiology data
-        fetchStateData(state);
+        fetchStateData(state, area);
     }
 }
 
+// Function to reset the table data
+function resetTable() {
+    document.getElementById('population').innerText = '';
+    document.getElementById('tested').innerText = '';
+    document.getElementById('not-tested').innerText = '';
+    document.getElementById('covid-positive').innerText = '';
+    document.getElementById('covid-negative').innerText = '';
+    document.getElementById('death').innerText = '';
+    document.getElementById('recovered').innerText = '';
+    document.getElementById('density').innerText = ''; // Add density reset
+}
+
 // Fetch location key, demographic data, and epidemiology data, then update the table
-function fetchStateData(stateName) {
+function fetchStateData(stateName, area) {
     // Fetch location key
     d3.json('http://127.0.0.1:5000/api/v1.0/states')
         .then(statesData => {
@@ -74,7 +96,7 @@ function fetchStateData(stateName) {
         })
         .then(locationKey => {
             // Fetch demographic data using the location key
-            fetchDemographicData(locationKey);
+            fetchDemographicData(locationKey, area);
             // Fetch epidemiology data using the location key
             fetchEpidemiologyData(locationKey);
         })
@@ -82,7 +104,7 @@ function fetchStateData(stateName) {
 }
 
 // Fetch demographic data and update the table
-function fetchDemographicData(locationKey) {
+function fetchDemographicData(locationKey, area) {
     d3.json('http://127.0.0.1:5000/api/v1.0/demographic_us')
         .then(data => {
             console.log("Demographic API response data:", data); // Debugging log
@@ -91,7 +113,15 @@ function fetchDemographicData(locationKey) {
             console.log("State data found:", stateData); // Debugging log
 
             if (stateData) {
-                document.getElementById('population').innerText = stateData.population || 'N/A';
+                document.getElementById('population').innerText = stateData.population || '';
+                // Calculate and display population density
+                if (area && stateData.population) {
+                    var density = stateData.population / area;
+                    document.getElementById('density').innerText = density.toFixed(2) || '';
+                    document.getElementById('legend').innerHTML = 'Highlighted: ' + stateData.state + ' (Density: ' + density.toFixed(2) + ')'; // Update legend
+                } else {
+                    document.getElementById('density').innerText = '';
+                }
             }
         })
         .catch(error => console.error('Error fetching demographic data:', error));
@@ -119,10 +149,10 @@ function fetchEpidemiologyData(locationKey) {
             });
 
             // Update the table with the maximum values
-            document.getElementById('tested').innerText = maxTested || 'N/A';
-            document.getElementById('recovered').innerText = maxRecovered || 'N/A';
-            document.getElementById('death').innerText = maxDeaths || 'N/A';
-            document.getElementById('covid-positive').innerText = stateData.length > 0 ? stateData[stateData.length - 1].cumulative_confirmed || 'N/A' : 'N/A';
+            document.getElementById('tested').innerText = maxTested || '';
+            document.getElementById('recovered').innerText = maxRecovered || '';
+            document.getElementById('death').innerText = maxDeaths || '';
+            document.getElementById('covid-positive').innerText = stateData.length > 0 ? stateData[stateData.length - 1].cumulative_confirmed || '' : '';
         })
         .catch(error => console.error('Error fetching epidemiology data:', error));
 }
@@ -142,7 +172,7 @@ fetch('https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geo
 
         // Set initial state name
         document.getElementById('info-panel-header').innerHTML = '<h2>United States</h2>';
-        document.getElementById('legend').innerHTML = 'Highlighted: None'; // Set initial legend text
+        document.getElementById('legend').innerHTML = 'Highlighted: None';
     });
 
 // Define a function to style the GeoJSON layer
@@ -159,6 +189,16 @@ function style(feature) {
 
 // Define a function to handle feature interactions
 function onEachFeature(feature, layer) {
+    // Store population in properties if available
+    if (feature.properties.population) {
+        layer.feature.properties.population = feature.properties.population;
+    }
+
+    // Store area in properties if available
+    if (feature.properties.area) {
+        layer.feature.properties.area = feature.properties.area;
+    }
+
     layer.on({
         mouseover: highlightFeature,
         mouseout: resetHighlight,
