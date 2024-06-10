@@ -35,6 +35,7 @@
 
 .info-table tr:nth-child(even) {
   background-color: #f2f2f2;
+<<<<<<< HEAD
 }
 
 /* New styles for the legend inside the map */
@@ -55,4 +56,6 @@
     justify-content: center;
     text-align: center;
     font-weight: bold;
+=======
+>>>>>>> main
 }
