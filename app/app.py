@@ -146,7 +146,7 @@ def vaccination_us():
                             cumulative_persons_fully_vaccinated,\
                             new_vaccine_doses_administered,\
                             cumulative_vaccine_doses_administered\
-                            FROM demographic;", con=engine)
+                            FROM vaccination;", con=engine)
 
     vac_payload = list()
 
