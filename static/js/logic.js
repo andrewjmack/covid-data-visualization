@@ -8,7 +8,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 var currentZoomedLayer = null;  // Variable to track the currently zoomed layer
 
-// Function to highlight feature and display state name and density in legend each time the mouse hovers over
+// Function to highlight feature and display state name in legend each time the mouse hovers over
 function highlightFeature(e) {
     var layer = e.target;
 
@@ -20,15 +20,10 @@ function highlightFeature(e) {
         fillOpacity: 0.7
     });
 
-    // Calculate population density
-    var area = layer.feature.properties.area; // Assuming 'area' is in square kilometers
     var stateName = layer.feature.properties.name;
-    var population = layer.feature.properties.population; // Assuming population is available here
 
-    var density = population && area ? (population / area).toFixed(2) : 'N/A';
-
-    // Display the state name and density in the legend
-    document.getElementById('legend').innerHTML = 'Highlighted: ' + stateName + ' (Density: ' + density + ')';
+    // Display the state name in the legend
+    document.getElementById('legend').innerHTML = 'Highlighted: ' + stateName;
 
     // Bring the layer to the front
     if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
@@ -49,7 +44,6 @@ function resetHighlight(e) {
 function showInfoAndZoom(e) {
     var layer = e.target;
     var state = layer.feature.properties.name;
-    var area = layer.feature.properties.area; // Assuming 'area' is in square kilometers
 
     console.log("Clicked state:", state); // Debugging log
 
@@ -67,7 +61,7 @@ function showInfoAndZoom(e) {
         currentZoomedLayer = layer;  // Update the currently zoomed layer
 
         // Fetch and display demographic and epidemiology data
-        fetchStateData(state, area);
+        fetchStateData(state);
     }
 }
 
@@ -78,11 +72,10 @@ function resetTable() {
     document.getElementById('covid-positive').innerText = '';
     document.getElementById('death').innerText = '';
     document.getElementById('recovered').innerText = '';
-    document.getElementById('density').innerText = ''; // Add density reset
 }
 
 // Fetch location key, demographic data, and epidemiology data, then update the table
-function fetchStateData(stateName, area) {
+function fetchStateData(stateName) {
     // Fetch location key
     d3.json('http://127.0.0.1:5000/api/v1.0/states')
         .then(statesData => {
@@ -94,7 +87,7 @@ function fetchStateData(stateName, area) {
         })
         .then(locationKey => {
             // Fetch demographic data using the location key
-            fetchDemographicData(locationKey, area);
+            fetchDemographicData(locationKey);
             // Fetch epidemiology data using the location key
             fetchEpidemiologyData(locationKey);
         })
@@ -102,7 +95,7 @@ function fetchStateData(stateName, area) {
 }
 
 // Fetch demographic data and update the table
-function fetchDemographicData(locationKey, area) {
+function fetchDemographicData(locationKey) {
     d3.json('http://127.0.0.1:5000/api/v1.0/demographic_us')
         .then(data => {
             console.log("Demographic API response data:", data); // Debugging log
@@ -112,14 +105,6 @@ function fetchDemographicData(locationKey, area) {
 
             if (stateData) {
                 document.getElementById('population').innerText = stateData.population || '';
-                // Calculate and display population density
-                if (area && stateData.population) {
-                    var density = stateData.population / area;
-                    document.getElementById('density').innerText = density.toFixed(2) || '';
-                    document.getElementById('legend').innerHTML = 'Highlighted: ' + stateData.state + ' (Density: ' + density.toFixed(2) + ')'; // Update legend
-                } else {
-                    document.getElementById('density').innerText = '';
-                }
             }
         })
         .catch(error => console.error('Error fetching demographic data:', error));
@@ -187,19 +172,52 @@ function style(feature) {
 
 // Define a function to handle feature interactions
 function onEachFeature(feature, layer) {
-    // Store population in properties if available
-    if (feature.properties.population) {
-        layer.feature.properties.population = feature.properties.population;
-    }
-
-    // Store area in properties if available
-    if (feature.properties.area) {
-        layer.feature.properties.area = feature.properties.area;
-    }
-
     layer.on({
         mouseover: highlightFeature,
         mouseout: resetHighlight,
         click: showInfoAndZoom
     });
+}
+
+// Show information for the selected date
+function showInfoForDate() {
+    var selectedDate = document.getElementById('date-input').value;
+    var stateName = document.getElementById('info-panel-header').innerText.trim();
+
+    if (!selectedDate || !stateName || stateName === 'United States') {
+        alert('Please select a date and a state.');
+        return;
+    }
+
+    // Fetch the location key for the selected state
+    d3.json('http://127.0.0.1:5000/api/v1.0/states')
+        .then(statesData => {
+            var stateInfo = statesData.find(item => item.state === stateName);
+            if (!stateInfo) throw new Error('State not found');
+
+            var locationKey = stateInfo.location_key;
+
+            // Fetch epidemiology data for the selected date and location key
+            return d3.json('http://127.0.0.1:5000/api/v1.0/epidemiology_us')
+                .then(data => {
+                    var stateData = data.find(item => item.location_key === locationKey && item.date === selectedDate);
+                    if (!stateData) {
+                        alert('No data available for the selected date.');
+                        return;
+                    }
+
+                    // Update the table with the data for the selected date
+                    document.getElementById('tested').innerText = stateData.new_tested || 'N/A';
+                    document.getElementById('covid-positive').innerText = stateData.new_confirmed || 'N/A';
+                    document.getElementById('death').innerText = stateData.new_deceased || 'N/A';
+                    document.getElementById('recovered').innerText = stateData.new_recovered || 'N/A';
+                });
+        })
+        .catch(error => console.error('Error fetching data:', error));
+}
+// Function to clean the table data
+function cleanData() {
+    resetTable();
+    document.getElementById('info-panel-header').innerHTML = '<h2>United States</h2>';
+    document.getElementById('legend').innerHTML = 'Highlighted: None';
 }
