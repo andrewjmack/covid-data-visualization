@@ -9,93 +9,50 @@
     <script src="https://d3js.org/d3.v6.min.js"></script> <!-- Add d3.js -->
 </head>
 <body>
-<<<<<<< HEAD
     <div id="map">
         <div id="legend" class="legend"></div> <!-- Legend div added inside map -->
     </div>
-=======
-    <div id="map"></div>
->>>>>>> main
     <div id="state-info"></div>
     <div id="info-panel">
         <div id="info-panel-header"></div>
         
-<<<<<<< HEAD
         <input type="date" id="date-input" min="2020-01-01" max="2022-12-31">
         <button onclick="showInfoForDate()">Show Info</button>
+        <button onclick="cleanData()">Clean Data</button>
         <div id="info-panel-content"></div>  
-=======
-          <input type="date" id="date-input" min="2020-01-01" max="2022-12-31">
-          <button onclick="showInfoForDate()">Show Info</button>
-          <div id="info-panel-content"></div>  
->>>>>>> main
         
         <table class="info-table">
           <tr>
-            <th>Population</th>
-<<<<<<< HEAD
-            <td id="population"></td>
+              <th>Population</th>
+              <td id="population"></td>
           </tr>
           <tr>
-            <th>Tested</th>
-            <td id="tested"></td>
+              <th>Tested</th>
+              <td id="tested"></td>
           </tr>
           <tr>
-            <th>Not Tested</th>
-            <td id="not-tested"></td>
+              <th>Covid-19 Positive</th>
+              <td id="covid-positive"></td>
           </tr>
           <tr>
-            <th>Covid-19 Positive</th>
-            <td id="covid-positive"></td>
+              <th>Death</th>
+              <td id="death"></td>
           </tr>
           <tr>
-            <th>Covid-19 Negative</th>
-            <td id="covid-negative"></td>
+              <th>Recovered</th>
+              <td id="recovered"></td>
           </tr>
           <tr>
-            <th>Death</th>
-            <td id="death"></td>
-          </tr>
-          <tr>
-            <th>Recovered</th>
-            <td id="recovered"></td>
+              <th>Positive Rate</th>
+              <td id="positive_rate"></td> <!-- Changed this row for positive rate -->
           </tr>
         </table>
+      
+        <canvas id="chart" width="400" height="200"></canvas> <!-- Chart added -->
     </div>
-=======
-            <td>N/A</td>
-          </tr>
-          <tr>
-            <th>Tested</th>
-            <td>N/A</td>
-          </tr>
-          <tr>
-            <th>Not Tested</th>
-            <td>N/A</td>
-          </tr>
-          <tr>
-            <th>Covid-19 Positive</th>
-            <td>N/A</td>
-          </tr>
-          <tr>
-            <th>Covid-19 Negative</th>
-            <td>N/A</td>
-          </tr>
-          <tr>
-            <th>Death</th>
-            <td>N/A</td>
-          </tr>
-          <tr>
-            <th>Recovered</th>
-            <td>N/A</td>
-          </tr>
-          
-          <!-- 추가 정보 -->
-        </table>
-      </div>
->>>>>>> main
     <div id="state-name" class="state-name"></div> <!-- Add this line for state name display -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Add Chart.js -->
     <script src="static/js/logic.js"></script>
 </body>
 </html>
