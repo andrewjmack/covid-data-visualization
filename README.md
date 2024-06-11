@@ -1,5 +1,6 @@
-# covid-data-visualization
-DU Data Analytics Project 3 (June 2024)
+Alt-covid-data-visualization
+======
+University of Denver: Data Analytics  |  Project 3
 <img src="https://capsule-render.vercel.app/api?type=waving&color=BDBDC8&height=150&section=header" />
 
 ### Project Overview & Purpose
@@ -33,9 +34,7 @@ The SQLite database is provided herein, but can be recreated by following the in
 
 Run app.py from the command line interface ("CLI") while in the same directory folder locally.
 
-<img src="https://github.com/andrewjmack/covid-data-visualization/resources/PNG/api_landing_page" />
-
-- test using an img src tag here to the URL in a repo folder with PNG file of ETL process
+![api_landing_page](https://github.com/andrewjmack/covid-data-visualization/resources/PNG/api_landing_page "API landing page with endpoint routes")
 
 
 ### Ethical considerations
