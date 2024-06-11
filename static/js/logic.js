@@ -3,13 +3,13 @@ var colors = ['#FFEDA0', '#FED976', '#FEB24C', '#FD8D3C', '#FC4E2A', '#E31A1C', 
 
 // Function to get color based on positive rate
 function getColor(d) {
-    return d > 40 ? colors[7] :
+    return d > 38 ? colors[7] :
            d > 35 ? colors[6] :
-           d > 30 ? colors[5] :
-           d > 25 ? colors[4] :
-           d > 20 ? colors[3] :
-           d > 15 ? colors[2] :
-           d > 10 ? colors[1] :
+           d > 32 ? colors[5] :
+           d > 29 ? colors[4] :
+           d > 26 ? colors[3] :
+           d > 23 ? colors[2] :
+           d > 20 ? colors[1] :
                     colors[0];
 }
 
