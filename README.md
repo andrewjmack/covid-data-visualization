@@ -2,6 +2,54 @@
 DU Data Analytics Project 3 (June 2024)
 <img src="https://capsule-render.vercel.app/api?type=waving&color=BDBDC8&height=150&section=header" />
 
+### Project Overview & Purpose
+This repository houses content assembled to complete the project three "data visualization" track.
+
+The purpose of this project was to allow for a better understanding of the impact that the COVID-19 epidemic had in the United States by providing visibility to measures such as infection, vaccination and recovery rates in each state through maps, tables and charts.
+
+A dashboard transforms publicly available data (that is otherwise difficult to access or make sense of) into these visuals with which the public and U.S. health officials can interact. We believe there is a great public interest and benefit in access to this information, specifically as it pertains to the relationship between vaccination rates, population density and health outcomes in each state during the pandemic.
+
+In addition to the dashboard, API endpoints are provided to allow for ease of access to clean U.S. source data on this topic to aid in the democratization of data. These endpoints are served via SQLite database, Flask app and SQLAlchemy for object relational mapping.
+
+### Requirements for Use
+There are several prerequisites for accessing and utilizing the various stages of extraction, transformation, loading ("ETL") and visualization:
+
+(The following will be cleaned up once all dependencies are listed)
+Jupyter Notebook
+import sqlalchemy
+from sqlalchemy.ext.automap import automap_base
+from sqlalchemy.orm import Session
+from sqlalchemy import create_engine, func
+from flask import Flask, jsonify, render_template
+from flask_cors import CORS
+import pandas as pd
+
+
+
+The SQLite database is provided herein, but can be recreated by following the instructions in the Schema.SQL file.
+
+
+### Instructions for Use
+
+Run app.py from the command line interface ("CLI") while in the same directory folder locally.
+
+<img src="https://github.com/andrewjmack/covid-data-visualization/resources/PNG/api_landing_page" />
+
+- test using an img src tag here to the URL in a repo folder with PNG file of ETL process
+
+
+### Ethical considerations
+(at least one paragraph)
+
+### 
+
+### References
+- Background styling reference for endpoints page: https://getbootstrap.com/docs/5.3/utilities/background/#how-it-works
+- Dropdown Events & Plotly: https://jonathan-moo.github.io/ASU-VIRT-DATA-PT-03-2023-U-LOLC/14.3/index.html
+- University of Denver: Data Visualization course activities and notes
+
+
+
 ### Data Visualization Track
 
  For this track, your group will tell a story using data visualizations. Here are the specific requirements:
