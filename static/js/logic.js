@@ -75,9 +75,7 @@ function showInfoAndZoom(e) {
 function resetTable() {
     document.getElementById('population').innerText = '';
     document.getElementById('tested').innerText = '';
-    document.getElementById('not-tested').innerText = '';
     document.getElementById('covid-positive').innerText = '';
-    document.getElementById('covid-negative').innerText = '';
     document.getElementById('death').innerText = '';
     document.getElementById('recovered').innerText = '';
     document.getElementById('density').innerText = ''; // Add density reset
