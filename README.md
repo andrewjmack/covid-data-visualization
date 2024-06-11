@@ -36,7 +36,7 @@ Instructions for Use
 ------
 1. From the command line interface ("CLI"), navigate to the app folder and launch the app: `python app.py`
 
-![alt-text](https://github.com/andrewjmack/covid-data-visualization/resources/PNG/api_landing_page "API landing page with endpoint routes")
+![alt-text](https://github.com/andrewjmack/covid-data-visualization/blob/main/resources/png/api_landing_page.png "API landing page with endpoint routes")
 
 
 Ethical considerations
