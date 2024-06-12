@@ -1,36 +1,44 @@
 covid-data-visualization
 ======
 University of Denver: Data Analytics  |  Project 3
-<img src="https://capsule-render.vercel.app/api?type=waving&color=BDBDC8&height=150&section=header" />
+
+(insert screenshot of dashboard here)
 
 Project Overview & Purpose
 ------
 This repository houses content assembled to complete the project three "data visualization" track.
 
-The purpose of this project was to allow for a better understanding of the impact that the COVID-19 epidemic had in the United States by providing visibility to measures such as infection, vaccination and recovery rates in each state through maps, tables and charts.
+The purpose of this project is to allow for a better understanding of the impact that the COVID-19 epidemic had in the United States by providing visibility to measures such as infection, vaccination and recovery rates in each state through maps, tables and charts.
 
 A dashboard transforms publicly available data (that is otherwise difficult to access or make sense of) into these visuals with which the public and U.S. health officials can interact. We believe there is a great public interest and benefit in access to this information, specifically as it pertains to the relationship between vaccination rates, population density and health outcomes in each state during the pandemic.
 
 In addition to the dashboard, API endpoints are provided to allow for ease of access to clean U.S. source data on this topic to aid in the democratization of data. These endpoints are served via SQLite database, Flask app and SQLAlchemy for object relational mapping.
 
+Contents
+------
+
+
 Requirements for Use
 ------
-There are several prerequisites for accessing and utilizing the various stages of extraction, transformation, loading ("ETL") and visualization:
+There are several prerequisites for accessing and utilizing the various stages of extraction, transformation, loading ("ETL") and visualization. The following are available for installation via Python Package Index; refer to source documentation for further details:
 
-(The following will be cleaned up once all dependencies are listed)
-Jupyter Notebook
-import sqlalchemy
-from sqlalchemy.ext.automap import automap_base
-from sqlalchemy.orm import Session
-from sqlalchemy import create_engine, func
-from flask import Flask, jsonify, render_template
-from flask_cors import CORS
-import pandas as pd
+   Jupyter Notebook:
+   `pip install notebook`
 
+   `jupyter notebook`
 
+   SQLAlchemy:
+   `pip install SQLAlchemy`
+
+   Pandas:
+   `pip install pandas`
+
+   Flask:
+   `pip install Flask`
+   To suppress Cross-Origin Resource Sharing (CORS) error:
+   `pip install Flask-Cors`
 
 The SQLite database is provided herein, but can be recreated by following the instructions in the Schema.SQL file.
-
 
 Instructions for Use
 ------
@@ -41,7 +49,9 @@ Instructions for Use
 
 Ethical considerations
 ------
-(at least one paragraph)
+Paragraph on source of data
+
+Paragraph on our considerations (HIPAA)
 
 References
 ------
@@ -49,7 +59,7 @@ References
 - Dropdown Events & Plotly: https://jonathan-moo.github.io/ASU-VIRT-DATA-PT-03-2023-U-LOLC/14.3/index.html
 - University of Denver: Data Visualization course activities and notes
 
-
+<img src="https://capsule-render.vercel.app/api?type=waving&color=BDBDC8&height=150&section=header" />
 
 ### Data Visualization Track
 
