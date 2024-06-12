@@ -1,3 +1,9 @@
+let cumTested = [];
+let cumDeath = [];
+let cumRecovered = [];
+let dates = [];
+let currentStateData = {}; // 현재 선택된 주의 데이터를 저장
+
 // Define colors based on positive rate
 var colors = ['#FFEDA0', '#FED976', '#FEB24C', '#FD8D3C', '#FC4E2A', '#E31A1C', '#BD0026', '#800026'];
 
@@ -75,10 +81,51 @@ function fetchStateData(stateName) {
             return stateInfo.location_key;
         })
         .then(locationKey => {
-            fetchDemographicData(locationKey);
-            fetchEpidemiologyData(locationKey);
+            return Promise.all([
+                fetchDemographicData(locationKey),
+                fetchEpidemiologyData(locationKey)
+            ]);
+        })
+        .then(([demographicData, epidemiologyData]) => {
+            currentStateData = processData(demographicData, epidemiologyData);
+            updateTable(demographicData, epidemiologyData);
+            optionChanged(document.getElementById('selDataset').value);
         })
         .catch(error => console.error('Error fetching state data:', error));
+}
+
+function fetchDemographicData(locationKey) {
+    return d3.json('http://127.0.0.1:5000/api/v1.0/demographic_us')
+        .then(data => {
+            return data.find(item => item.location_key === locationKey);
+        })
+        .catch(error => console.error('Error fetching demographic data:', error));
+}
+
+function fetchEpidemiologyData(locationKey) {
+    return d3.json('http://127.0.0.1:5000/api/v1.0/epidemiology_us')
+        .then(data => {
+            return data.filter(item => item.location_key === locationKey);
+        })
+        .catch(error => console.error('Error fetching epidemiology data:', error));
+}
+
+function processData(demographicData, epidemiologyData) {
+    let cumTested = [], cumDeath = [], cumRecovered = [], dates = [];
+    
+    epidemiologyData.forEach(entry => {
+        cumTested.push(entry.cumulative_tested);
+        cumDeath.push(entry.cumulative_deceased);
+        cumRecovered.push(entry.cumulative_recovered);
+        dates.push(entry.date);
+    });
+    
+    return {
+        cumTested: cumTested,
+        cumDeath: cumDeath,
+        cumRecovered: cumRecovered,
+        dates: dates
+    };
 }
 
 // Initialize the map and calculate state positive rates
@@ -143,54 +190,30 @@ function resetTable() {
     document.getElementById('positive_rate').innerText = ''; // Reset positive rate
 }
 
-// Fetch demographic data and update the table
-function fetchDemographicData(locationKey) {
-    d3.json('http://127.0.0.1:5000/api/v1.0/demographic_us')
-        .then(data => {
-            var stateData = data.find(item => item.location_key === locationKey);
-            if (stateData) {
-                document.getElementById('population').innerText = stateData.population || '';
-                // Save population data to be used for calculating positive rate
-                window.currentPopulation = stateData.population;
-            }
-        })
-        .catch(error => console.error('Error fetching demographic data:', error));
-}
+// Update the table with state data
+function updateTable(demographicData, epidemiologyData) {
+    let maxTested = 0, maxRecovered = 0, maxDeaths = 0, maxConfirmed = 0;
+    epidemiologyData.forEach(entry => {
+        if (entry.cumulative_tested > maxTested) maxTested = entry.cumulative_tested;
+        if (entry.cumulative_recovered > maxRecovered) maxRecovered = entry.cumulative_recovered;
+        if (entry.cumulative_deceased > maxDeaths) maxDeaths = entry.cumulative_deceased;
+        if (entry.cumulative_confirmed > maxConfirmed) maxConfirmed = entry.cumulative_confirmed;
+    });
 
-// Fetch epidemiology data and update the table
-function fetchEpidemiologyData(locationKey) {
-    d3.json('http://127.0.0.1:5000/api/v1.0/epidemiology_us')
-        .then(data => {
-            var stateData = data.filter(item => item.location_key === locationKey);
-            let maxTested = 0, maxRecovered = 0, maxDeaths = 0, maxConfirmed = 0;
-            stateData.forEach(entry => {
-                if (entry.cumulative_tested > maxTested) maxTested = entry.cumulative_tested;
-                if (entry.cumulative_recovered > maxRecovered) maxRecovered = entry.cumulative_recovered;
-                if (entry.cumulative_deceased > maxDeaths) maxDeaths = entry.cumulative_deceased;
-                if (entry.cumulative_confirmed > maxConfirmed) maxConfirmed = entry.cumulative_confirmed;
-            });
-            document.getElementById('tested').innerText = maxTested || '';
-            document.getElementById('recovered').innerText = maxRecovered || '';
-            document.getElementById('death').innerText = maxDeaths || '';
-            document.getElementById('covid-positive').innerText = maxConfirmed || '';
-            
-            // Calculate positive rate
-            let positiveRate = 'N/A';
-            if (window.currentPopulation && maxConfirmed) {
-                positiveRate = ((maxConfirmed / window.currentPopulation) * 100).toFixed(2);
-                document.getElementById('positive_rate').innerText = `${positiveRate}%`;
-            } else {
-                document.getElementById('positive_rate').innerText = 'N/A';
-            }
+    document.getElementById('population').innerText = demographicData.population || '';
+    document.getElementById('tested').innerText = maxTested || '';
+    document.getElementById('recovered').innerText = maxRecovered || '';
+    document.getElementById('death').innerText = maxDeaths || '';
+    document.getElementById('covid-positive').innerText = maxConfirmed || '';
 
-            // Update the map color based on positive rate
-            if (currentZoomedLayer) {
-                const color = getColor(positiveRate);
-                currentZoomedLayer.setStyle({ fillColor: color });
-            }
-        })
-        
-        .catch(error => console.error('Error fetching epidemiology data:', error));
+    // Calculate positive rate
+    let positiveRate = 'N/A';
+    if (demographicData.population && maxConfirmed) {
+        positiveRate = ((maxConfirmed / demographicData.population) * 100).toFixed(2);
+        document.getElementById('positive_rate').innerText = `${positiveRate}%`;
+    } else {
+        document.getElementById('positive_rate').innerText = 'N/A';
+    }
 }
 
 // Show information for the selected date
@@ -221,6 +244,7 @@ function showInfoForDate() {
         })
         .catch(error => console.error('Error fetching data:', error));
 }
+
 // Define a function to handle feature interactions
 function onEachFeature(feature, layer) {
     layer.on({
@@ -228,4 +252,53 @@ function onEachFeature(feature, layer) {
         mouseout: resetHighlight,
         click: showInfoAndZoom
     });
+}
+
+// Plotly graph update functions
+function updatePlotly(newx, newy) {
+    var LINE = document.getElementById("Graph");
+
+    // Note the extra brackets around 'newx' and 'newy'
+    Plotly.restyle(LINE, "x", [newx]);
+    Plotly.restyle(LINE, "y", [newy]);
+}
+
+function BuildGraph(x, y) {
+    var trace = {
+        x: x,
+        y: y,
+        type: 'scatter'
+    };
+    
+    var layout = {
+        xaxis: {
+            type: 'date',
+            title: 'Date'
+        },
+        yaxis: {
+            title: 'Count'
+        },
+        title: 'Covid-19 Data Over Time'
+    };
+
+    Plotly.newPlot('Graph', [trace], layout);
+}
+
+function optionChanged(graphName) {
+    let yax = [];
+    let xax = currentStateData.dates || [];
+
+    switch (graphName) {
+        case "0":
+            yax = currentStateData.cumDeath || [];
+            break;
+        case "1":
+            yax = currentStateData.cumTested || [];
+            break;
+        case "2":
+            yax = currentStateData.cumRecovered || [];
+            break;
+    }
+    BuildGraph(xax, yax);
+    updatePlotly(xax, yax);
 }

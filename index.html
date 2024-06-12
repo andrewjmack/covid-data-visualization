@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="static/css/style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://d3js.org/d3.v6.min.js"></script> <!-- Add d3.js -->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=4.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> <!--Add plotly-->
 </head>
 <body>
     <div id="map">
@@ -47,7 +53,16 @@
               <td id="positive_rate"></td> <!-- Changed this row for positive rate -->
           </tr>
         </table>
-    
+        <div class="card card-body bg-light">
+            <h2>Data Shown:</h2>
+            <select id="selDataset" onchange="optionChanged(this.value)">
+            <option value=0>Deaths over Time</option>
+            <option value=1>Tested over Time</option>
+            <option value=2>Recovered over Time</option>
+            </select>
+          </div>
+  
+          <div id = "Graph"></div>
     </div>
     <div id="state-name" class="state-name"></div> <!-- Add this line for state name display -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
