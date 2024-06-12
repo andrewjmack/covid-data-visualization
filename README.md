@@ -65,14 +65,21 @@ Instructions for Use
 
 **NOTE: The Flask application app.py MUST be running in the background in order for the dashboard to reach the API data for initial rendering and user interaction.**
 
-Ethical considerations
+Ethical Considerations
 ------
-Paragraph on source of data
+Our initial considerations when working with healthcare related data were legal privacy vs. the potential limiting nature of anonymity (and usefulness of a dataset) and the possibility for bias by protected class (gender, race, et al).
 
-Paragraph on our considerations (HIPAA)
+In the source data we chose to clean and then ultimately display, there were no biases introduced for data points such as age, sex or comorbidities (i.e., preexisting health conditions). Source data was also nnot available at a personal level, so the legal privacy protections in the storage and transfer of personal medical records as regulated by HIPAA was not a concern we would have to navigate.
+
+Further ethical questions [^1] that we considered as a team pertained to a broader ongoing discussion in the healthcare, technology and data communities on the ethics of data collection by private entities through technology such as personal devices (e.g., smart phones):
+- Where does the benefit of private, digital medical information collection during an event such as a global epidemic end and invasion of personal privacy begin?
+- What are the safeguards to protecting this data in the present and in a post-pandemic future?
+- How will this data be used in the future when public opinion and perception has changed after the global COVID-19 crisis?
 
 References
 ------
+[^1]: "In the shadow of privacy: Overlooked ethical concerns in COVID-19 digital epidemiology": https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9635223/
+
 Broad data source of original reference:
 - COVID-19 Open Data: https://health.google.com/covid-19/open-data/raw-data
 
