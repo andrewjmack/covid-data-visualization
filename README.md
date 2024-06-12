@@ -61,7 +61,9 @@ Instructions for Use
       - recovery count
    - Choosing a date within the allowable range will update the table and chart
 
-**The Flask application app.py MUST be running in the background in order for the dashboard to reach the API data for initial rendering and user interaction.**
+![alt-text](https://github.com/andrewjmack/covid-data-visualization/blob/main/resources/png/interaction.png "Available user interactions with dashboard")
+
+**NOTE: The Flask application app.py MUST be running in the background in order for the dashboard to reach the API data for initial rendering and user interaction.**
 
 Ethical considerations
 ------
