@@ -28,25 +28,19 @@ Requirements for Use
 ------
 There are several prerequisites for accessing and utilizing the various stages of extraction, transformation, loading ("ETL") and visualization, the chief among them being Python. The following are available for installation via Python Package Index; refer to source documentation for further details:
 
-   ..* Jupyter Notebook:
+   **Jupyter Notebook:**
+      install: `pip install notebook`
+      run: `jupyter notebook`
 
-   ... install: `pip install notebook`
+   **SQLAlchemy:**
+      install: `pip install SQLAlchemy`
 
-   ... run: `jupyter notebook`
+   **Pandas:**
+      install: `pip install pandas`
 
-   ..* SQLAlchemy:
-   
-   ... install: `pip install SQLAlchemy`
-
-   ..* Pandas:
-   
-   ... install: `pip install pandas`
-
-   ..* Flask:
-   
-   ... install: `pip install Flask`
-   ... Suppress Cross-Origin Resource Sharing (CORS) error:
-   ... `pip install Flask-Cors`
+   **Flask:**
+      install: `pip install Flask`
+      for Cross-Origin Resource Sharing error: `pip install Flask-Cors`
 
 The SQLite database is provided herein, but can be recreated by following the instructions in the Schema.SQL file.
 
