@@ -2,7 +2,7 @@ let cumTested = [];
 let cumDeath = [];
 let cumRecovered = [];
 let dates = [];
-let currentStateData = {}; // 현재 선택된 주의 데이터를 저장
+let currentStateData = {};
 
 // Define colors based on positive rate
 var colors = ['#FFEDA0', '#FED976', '#FEB24C', '#FD8D3C', '#FC4E2A', '#E31A1C', '#BD0026', '#800026'];
@@ -187,7 +187,7 @@ function resetTable() {
     document.getElementById('covid-positive').innerText = '';
     document.getElementById('death').innerText = '';
     document.getElementById('recovered').innerText = '';
-    document.getElementById('positive_rate').innerText = ''; // Reset positive rate
+    document.getElementById('positive_rate').innerText = '';
 }
 
 // Update the table with state data
