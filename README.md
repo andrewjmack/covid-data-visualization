@@ -2,7 +2,7 @@ covid-data-visualization
 ======
 University of Denver: Data Analytics  |  Project 3
 
-(insert screenshot of dashboard here)
+![alt-text](https://github.com/andrewjmack/covid-data-visualization/blob/main/resources/png/dashboard_NE.png "Example of Dashboard with State Selection Made")
 
 Project Overview & Purpose
 ------
