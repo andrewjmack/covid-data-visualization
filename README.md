@@ -14,29 +14,39 @@ A dashboard transforms publicly available data (that is otherwise difficult to a
 
 In addition to the dashboard, API endpoints are provided to allow for ease of access to clean U.S. source data on this topic to aid in the democratization of data. These endpoints are served via SQLite database, Flask app and SQLAlchemy for object relational mapping.
 
-Contents
+Repo Contents
 ------
+The repository contents must be downloaded in order to run locally, with additional requirements detailed below.
 
+   - **Covid_cleaning.ipynb** (Jupyter Notebook) contains the extraction and cleaning of the source, third-party data
+   - **resources** contains the resulting CSV files
+   - **app** contains the SQLite database (which schema and tables rely on the resources CSV files) and the API application to access the clean data
+   - **static** contains the JavaScript and CSS files for the dashboard
+   - **index.html** launches the dashboard
 
 Requirements for Use
 ------
-There are several prerequisites for accessing and utilizing the various stages of extraction, transformation, loading ("ETL") and visualization. The following are available for installation via Python Package Index; refer to source documentation for further details:
+There are several prerequisites for accessing and utilizing the various stages of extraction, transformation, loading ("ETL") and visualization, the chief among them being Python. The following are available for installation via Python Package Index; refer to source documentation for further details:
 
-   Jupyter Notebook:
-   `pip install notebook`
+   ..* Jupyter Notebook:
 
-   `jupyter notebook`
+   ... install: `pip install notebook`
 
-   SQLAlchemy:
-   `pip install SQLAlchemy`
+   ... run: `jupyter notebook`
 
-   Pandas:
-   `pip install pandas`
+   ..* SQLAlchemy:
+   
+   ... install: `pip install SQLAlchemy`
 
-   Flask:
-   `pip install Flask`
-   To suppress Cross-Origin Resource Sharing (CORS) error:
-   `pip install Flask-Cors`
+   ..* Pandas:
+   
+   ... install: `pip install pandas`
+
+   ..* Flask:
+   
+   ... install: `pip install Flask`
+   ... Suppress Cross-Origin Resource Sharing (CORS) error:
+   ... `pip install Flask-Cors`
 
 The SQLite database is provided herein, but can be recreated by following the instructions in the Schema.SQL file.
 
@@ -45,6 +55,8 @@ Instructions for Use
 1. From the command line interface ("CLI"), navigate to the app folder and launch the app: `python app.py`
 
 ![alt-text](https://github.com/andrewjmack/covid-data-visualization/blob/main/resources/png/api_landing_page.png "API landing page with endpoint routes")
+
+**The Flask application app.py MUST be running in the background in order for the dashboard to reach hte API data for initial rendering and user interactin.**
 
 
 Ethical considerations
@@ -58,6 +70,7 @@ References
 - Background styling reference for endpoints page: https://getbootstrap.com/docs/5.3/utilities/background/#how-it-works
 - Dropdown Events & Plotly: https://jonathan-moo.github.io/ASU-VIRT-DATA-PT-03-2023-U-LOLC/14.3/index.html
 - University of Denver: Data Visualization course activities and notes
+
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=BDBDC8&height=150&section=header" />
 
