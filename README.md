@@ -18,40 +18,50 @@ Repo Contents
 ------
 The repository contents must be downloaded in order to run locally, with additional requirements detailed below.
 
-   - **Covid_cleaning.ipynb** (Jupyter Notebook) contains the extraction and cleaning of the source, third-party data
+   - **Covid_cleaning.ipynb** (Jupyter Notebook) contains the extraction and cleaning of the source data
    - **resources** contains the resulting CSV files
-   - **app** contains the SQLite database (which schema and tables rely on the resources CSV files) and the API application to access the clean data
+   - **app** contains the SQLite database (which schema and tables rely on the resources CSV files for load) and the API application to access the clean data
    - **static** contains the JavaScript and CSS files for the dashboard
-   - **index.html** launches the dashboard
+   - **index.html** launches the dashboard for visualization and user interaction
 
-Requirements for Use
+Prerequisites for Use
 ------
 There are several prerequisites for accessing and utilizing the various stages of extraction, transformation, loading ("ETL") and visualization, the chief among them being Python. The following are available for installation via Python Package Index; refer to source documentation for further details:
 
-   **Jupyter Notebook:**
-      install: `pip install notebook`
-      run: `jupyter notebook`
+   - **Jupyter Notebook:**
+      - install: `pip install notebook`
+      - run: `jupyter notebook`
 
-   **SQLAlchemy:**
-      install: `pip install SQLAlchemy`
+   - **SQLAlchemy:**
+      - install: `pip install SQLAlchemy`
 
-   **Pandas:**
-      install: `pip install pandas`
+   - **Pandas:**
+      - install: `pip install pandas`
 
-   **Flask:**
-      install: `pip install Flask`
-      for Cross-Origin Resource Sharing error: `pip install Flask-Cors`
+   - **Flask:**
+      - install: `pip install Flask`
+      - for Cross-Origin Resource Sharing error: `pip install Flask-Cors`
 
-The SQLite database is provided herein, but can be recreated by following the instructions in the Schema.SQL file.
+The SQLite database can also be recreated by following the schema.SQL instructions.
 
 Instructions for Use
 ------
 1. From the command line interface ("CLI"), navigate to the app folder and launch the app: `python app.py`
 
+2. With the app running in the background, copy/paste the resulting Flask server URL into a browser address bar to access the API endpoints:
+`http://127.0.0.1:5000`
+
 ![alt-text](https://github.com/andrewjmack/covid-data-visualization/blob/main/resources/png/api_landing_page.png "API landing page with endpoint routes")
 
-**The Flask application app.py MUST be running in the background in order for the dashboard to reach hte API data for initial rendering and user interactin.**
+3. In a browser, access the dashboard by launching the index.html file:
+   - Clicking on a state in the choropleth will load its table and chart data
+   - Three charts are available via drop menu:
+      - number of people tested
+      - number of COVID-19 deaths
+      - recovery count
+   - Choosing a date within the allowable range will update the table and chart
 
+**The Flask application app.py MUST be running in the background in order for the dashboard to reach the API data for initial rendering and user interaction.**
 
 Ethical considerations
 ------
@@ -61,9 +71,20 @@ Paragraph on our considerations (HIPAA)
 
 References
 ------
-- Background styling reference for endpoints page: https://getbootstrap.com/docs/5.3/utilities/background/#how-it-works
-- Dropdown Events & Plotly: https://jonathan-moo.github.io/ASU-VIRT-DATA-PT-03-2023-U-LOLC/14.3/index.html
-- University of Denver: Data Visualization course activities and notes
+Broad data source of original reference:
+- COVID-19 Open Data: https://health.google.com/covid-19/open-data/raw-data
+
+Subset of data sources directly utilized for project:
+- Epidemiology: https://github.com/GoogleCloudPlatform/covid-19-open-data/blob/main/docs/table-epidemiology.md  
+- Vaccination: https://github.com/GoogleCloudPlatform/covid-19-open-data/blob/main/docs/table-vaccinations.md 
+- Demographics: https://github.com/GoogleCloudPlatform/covid-19-open-data/blob/main/docs/table-demographics.md
+
+Code references:
+- Background styling reference for endpoints page:
+https://getbootstrap.com/docs/5.3/utilities/background/#how-it-works
+- Dropdown Events & Plotly:
+https://jonathan-moo.github.io/ASU-VIRT-DATA-PT-03-2023-U-LOLC/14.3/index.html
+- EdX and University of Denver course activities and notes
 
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=BDBDC8&height=150&section=header" />
