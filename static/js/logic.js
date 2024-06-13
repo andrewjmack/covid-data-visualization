@@ -3,6 +3,8 @@ let cumDeath = [];
 let cumRecovered = [];
 let dates = [];
 let currentStateData = {};
+let cumVac = [];
+vacdates =[];
 
 // Define colors based on positive rate
 var colors = ['#FFEDA0', '#FED976', '#FEB24C', '#FD8D3C', '#FC4E2A', '#E31A1C', '#BD0026', '#800026'];
@@ -83,11 +85,12 @@ function fetchStateData(stateName) {
         .then(locationKey => {
             return Promise.all([
                 fetchDemographicData(locationKey),
-                fetchEpidemiologyData(locationKey)
+                fetchEpidemiologyData(locationKey),
+                fetchVaccineData(locationKey)
             ]);
         })
-        .then(([demographicData, epidemiologyData]) => {
-            currentStateData = processData(demographicData, epidemiologyData);
+        .then(([demographicData, epidemiologyData,vaccineData]) => {
+            currentStateData = processData(demographicData, epidemiologyData, vaccineData);
             updateTable(demographicData, epidemiologyData);
             optionChanged(document.getElementById('selDataset').value);
         })
@@ -110,8 +113,17 @@ function fetchEpidemiologyData(locationKey) {
         .catch(error => console.error('Error fetching epidemiology data:', error));
 }
 
-function processData(demographicData, epidemiologyData) {
+function fetchVaccineData(locationKey) {
+    return d3.json('http://127.0.0.1:5000/api/v1.0/vaccination_us')
+        .then(data => {
+            return data.filter(item => item.location_key === locationKey);
+        })
+        .catch(error => console.error('Error fetching vaccine data:', error));
+}
+
+function processData(demographicData, epidemiologyData, vaccineData) {
     let cumTested = [], cumDeath = [], cumRecovered = [], dates = [];
+    let cumVac = [], vacdates =[];
     
     epidemiologyData.forEach(entry => {
         cumTested.push(entry.cumulative_tested);
@@ -119,12 +131,19 @@ function processData(demographicData, epidemiologyData) {
         cumRecovered.push(entry.cumulative_recovered);
         dates.push(entry.date);
     });
+    vaccineData.forEach(entry => {
+        cumVac.push(entry.cumulative_persons_vaccinated);
+        vacdates.push(entry.date);
+    });
+
     
     return {
         cumTested: cumTested,
         cumDeath: cumDeath,
         cumRecovered: cumRecovered,
-        dates: dates
+        dates: dates,
+        cumVac: cumVac,
+        vacdates: vacdates
     };
 }
 
@@ -165,6 +184,31 @@ updateLegend();
 calculateStatePositiveRates();
 
 var currentZoomedLayer = null;
+
+function updateLegend() {
+    // Select the HTML element for the legend.
+    var legend = document.getElementById('percent-legend');
+    // Set the thresholds for each color.
+    var grades = [0, 20, 23, 26, 29, 32, 35, 38]; 
+    var labels = [];
+
+    // Create a label for each interval.
+    for (var i = 0; i < grades.length; i++) {
+        var from = grades[i];
+        var to = grades[i + 1];
+
+        // Add a colored square and the corresponding range to the label.
+        labels.push(
+            '<i style="background:' + getColor(from + 0.01) + '; width: 20px; height: 20px; display: inline-block; margin-right: 5px;"></i> ' +
+            from + (to ? '&ndash;' + to : '+'));
+    }
+
+    // Add the header for the legend.
+    legend.innerHTML = '<h4>Positive Rate (%)</h4>' + labels.join('<br>');
+}
+
+// Call updateLegend() to display the legend.
+updateLegend();
 
 // Function to highlight feature and display state name in legend
 function highlightFeature(e) {
@@ -281,21 +325,33 @@ function onEachFeature(feature, layer) {
     });
 }
 
-// Plotly graph update functions
-function updatePlotly(newx, newy) {
-    var LINE = document.getElementById("Graph");
 
-    // Note the extra brackets around 'newx' and 'newy'
-    Plotly.restyle(LINE, "x", [newx]);
-    Plotly.restyle(LINE, "y", [newy]);
-}
-
-function BuildGraph(x, y) {
-    var trace = {
+function BuildGraph(x, y,a,b,graphName) {
+    selectedName = ''
+    switch(graphName){
+        case "0":
+            selectedName='Deaths over Time';
+            break;
+        case "1":
+            selectedName='Tested over Time';
+            break;
+        case "2":
+            selectedName='Recovered over Time';
+            break;
+    }
+    var trace1 = {
         x: x,
-        y: y,
+        y: y, 
+        name: selectedName,
         type: 'scatter'
     };
+    var trace2={
+        x:a,
+        y:b,
+        name:'Persons Vaccinated',
+        line:{color:'Green'},
+        type:'scatter'
+    }
     
     var layout = {
         xaxis: {
@@ -308,12 +364,18 @@ function BuildGraph(x, y) {
         title: 'Covid-19 Data Over Time'
     };
 
-    Plotly.newPlot('Graph', [trace], layout);
+    var data = [trace1,trace2]
+
+    Plotly.newPlot('Graph', data, layout);
 }
+
 
 function optionChanged(graphName) {
     let yax = [];
     let xax = currentStateData.dates || [];
+    let a = currentStateData.dates ||[];
+    let b = currentStateData.cumVac || [];
+    
 
     switch (graphName) {
         case "0":
@@ -326,6 +388,10 @@ function optionChanged(graphName) {
             yax = currentStateData.cumRecovered || [];
             break;
     }
-    BuildGraph(xax, yax);
-    updatePlotly(xax, yax);
+    console.log(a);
+    console.log(b);
+    console.log(yax);
+    console.log(xax);
+    BuildGraph(xax, yax,a,b,graphName);
+    
 }
