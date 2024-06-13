@@ -55,7 +55,7 @@ Instructions for Use
 
 3. In a browser, access the dashboard by launching the index.html file:
    - Clicking on a state in the choropleth will load its table and chart data
-   - Three charts are available via drop menu:
+   - Three charts are available via drop menu which are all plotted along with the cumulative person vaccinated:
       - number of people tested
       - number of COVID-19 deaths
       - recovery count
