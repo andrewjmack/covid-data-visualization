@@ -158,6 +158,31 @@ calculateStatePositiveRates();
 
 var currentZoomedLayer = null;
 
+function updateLegend() {
+    // Select the HTML element for the legend.
+    var legend = document.getElementById('percent-legend');
+    // Set the thresholds for each color.
+    var grades = [0, 20, 23, 26, 29, 32, 35, 38]; 
+    var labels = [];
+
+    // Create a label for each interval.
+    for (var i = 0; i < grades.length; i++) {
+        var from = grades[i];
+        var to = grades[i + 1];
+
+        // Add a colored square and the corresponding range to the label.
+        labels.push(
+            '<i style="background:' + getColor(from + 0.01) + '; width: 20px; height: 20px; display: inline-block; margin-right: 5px;"></i> ' +
+            from + (to ? '&ndash;' + to : '+'));
+    }
+
+    // Add the header for the legend.
+    legend.innerHTML = '<h4>Positive Rate (%)</h4>' + labels.join('<br>');
+}
+
+// Call updateLegend() to display the legend.
+updateLegend();
+
 // Function to highlight feature and display state name in legend
 function highlightFeature(e) {
     var layer = e.target;
